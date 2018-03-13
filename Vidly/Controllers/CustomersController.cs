@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -9,6 +10,26 @@ namespace Vidly.Controllers
 {
     public class CustomersController : Controller
     {
+        /// <summary>
+        /// _context is for get the customer from database
+        /// So we nee this value to access the database
+        /// </summary>
+        private ApplicationDbContext _context;
+
+        public CustomersController()
+        {
+            _context = new ApplicationDbContext();
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources and optionally releases managed resources.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
         // GET: Customer
         /// <summary>
         /// This Method return all customers
@@ -16,7 +37,7 @@ namespace Vidly.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            var customers = GetCustomer();
+            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
 
             return View(customers);
         }
@@ -29,7 +50,7 @@ namespace Vidly.Controllers
         /// <returns></returns>
         public ActionResult Details(int id)
         {
-            var customer = GetCustomer().SingleOrDefault(c => c.Id == id);
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
 
             if (customer == null)
             {
@@ -37,19 +58,6 @@ namespace Vidly.Controllers
             }
 
             return View(customer);
-        }
-
-        /// <summary>
-        /// This method return IEnumerable of customers
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerable<Customer> GetCustomer()
-        {
-            return new List<Customer>
-            {
-                new Customer {Id=1,Name="John Smith" },
-                new Customer {Id=2,Name="Mary Williams" }
-            };
         }
     }
 }
