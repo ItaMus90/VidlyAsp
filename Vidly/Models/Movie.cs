@@ -12,10 +12,13 @@ namespace Vidly.Models
         [Required]
         [MaxLength(255)]
         public string Name { get; set; }
-        [Required]
+        
         public Genre Genre { get; set; }
+        [Required]
         public byte GenreId { get; set; }
+        public DateTime AddDate { get; set; }
         public DateTime ReleaseDate { get; set; }
         public byte NumberInStock { get; set; }
+
     }
 }
