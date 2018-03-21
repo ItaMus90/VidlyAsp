@@ -30,6 +30,7 @@
         @Html.ValidationMessageFor(v => v.NumberInStock)
     </div>
     @Html.HiddenFor(v => v.Id)
+    @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-primary">Save</button>
 }
 
