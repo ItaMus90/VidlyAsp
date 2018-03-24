@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,11 +12,11 @@ using AutoMapper;
 
 namespace Vidly.Controllers.API
 {
-    public class CustomerController : ApiController
+    public class CustomersController : ApiController
     {
         private ApplicationDbContext _context;
 
-        public CustomerController()
+        public CustomersController()
         {
             _context = new ApplicationDbContext();
         }
@@ -23,7 +24,10 @@ namespace Vidly.Controllers.API
         //GET /api/customers
         public IHttpActionResult GetCustomers()
         {
-            var customerDtos = _context.Customers.ToList().Select(Mapper.Map<Customer, CustomerDto>);
+            var customerDtos = _context.Customers
+                .Include(c => c.MembershipType)
+                .ToList()
+                .Select(Mapper.Map<Customer, CustomerDto>);
 
             return Ok(customerDtos);
         }
@@ -71,7 +75,7 @@ namespace Vidly.Controllers.API
             var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
 
             if (customerInDb == null)
-            {
+            {              
                  return NotFound();
             }
 
@@ -88,7 +92,7 @@ namespace Vidly.Controllers.API
             return Ok();
         }
 
-        //DELETE /api/customers/1
+        //DELETE /api/customer/1
         [HttpDelete]
         public IHttpActionResult DeleteCustomer(int id)
         {
